@@ -1,16 +1,19 @@
 import { FastifyRequest, FastifyReply } from 'fastify';
 import * as weatherService from '../services/weatherService';
 
-export const getWeatherData = async (req: FastifyRequest, reply: FastifyReply) => {
+export const getWeatherData = async (req: FastifyRequest, reply: FastifyReply, db: FirebaseFirestore.Firestore) => {
   try {
-    const data = weatherService.getAllWeatherData();
+    const snapshot = await db.collection('sensors-outside').get();
+
+    const data = snapshot.docs.map(doc => doc.data());
+
     reply.send(data);
   } catch (error) {
     reply.status(500).send({ message: 'Internal Server Error' });
   }
 };
 
-export const addWeatherData = async (req: FastifyRequest, reply: FastifyReply) => {
+export const addWeatherData = async (req: FastifyRequest, reply: FastifyReply, db: FirebaseFirestore.Firestore) => {
   try {
     const { temperature, humidity, location } = req.body as {
       temperature: number;
