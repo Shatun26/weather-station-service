@@ -1,4 +1,4 @@
-import buildApp from './app';
+import buildApp from './config/app';
 
 const startServer = async () => {
   const app = buildApp();

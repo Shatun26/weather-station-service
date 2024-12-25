@@ -13,6 +13,7 @@
   "description": "",
   "dependencies": {
     "@fastify/cors": "^10.0.1",
+    "@sinclair/typebox": "^0.34.13",
     "dotenv": "^16.4.7",
     "fastify": "^5.2.0",
     "fastify-plugin": "^5.0.1",
