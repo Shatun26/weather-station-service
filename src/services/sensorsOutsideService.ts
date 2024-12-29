@@ -1,13 +1,25 @@
 import { Firestore } from 'firebase-admin/firestore';
 
+interface SensorData {
+  temperature: number | null;
+  humidity: number | null;
+  timestamp: string;
+}
+
 export const getOutsideSensorsData = async (db: Firestore) => {
   const collection = db.collection('sensors-outside');
   const docRef = await collection.get();
 
-  return docRef.docs.map(doc => ({
+  const docsRef = docRef.docs.map(doc => ({
     id: doc.id,
-    ...doc.data(),
+    ...(doc.data() as SensorData),
   }));
+
+  const sortedData = docsRef.sort((a, b) => {
+    return new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime();
+  });
+
+  return sortedData;
 };
 
 export const addOutsideSensorsData = async (db: Firestore, temperature: number | null, humidity: number | null) => {

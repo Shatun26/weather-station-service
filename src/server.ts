@@ -1,6 +1,10 @@
 import buildApp from './config/app';
 
 const startServer = async () => {
+  if (!process.env.ACCESS_SECRET || !process.env.REFRESH_SECRET || !process.env.COOKIE_SECRET) {
+    throw new Error('Missing JWT secrets in environment variables');
+  }
+
   const app = buildApp();
 
   try {
