@@ -39,7 +39,10 @@ export const addOutsideSensorsDataController = async (
   }
 };
 
-export const deleteOutsideSensorsData = async (req: FastifyRequest<{ Body: DeleteIdsReqBody }>, res: FastifyReply) => {
+export const deleteOutsideSensorsDataController = async (
+  req: FastifyRequest<{ Body: DeleteIdsReqBody }>,
+  res: FastifyReply
+) => {
   const { ids } = req.body;
 
   try {

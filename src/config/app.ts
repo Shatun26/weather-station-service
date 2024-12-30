@@ -5,6 +5,7 @@ import { initializeFirebase } from './firebase';
 import fastifyJwt from '@fastify/jwt';
 import fastifyCookie from '@fastify/cookie';
 import authRoutes from '../routes/authRouters';
+import userRoutes from '../routes/userRoutes';
 
 const buildApp = () => {
   const app = fastify({
@@ -39,6 +40,7 @@ const buildApp = () => {
 
   app.addHook('onRequest', (req, _, done) => {
     req.db = app.db;
+    req.jwt = app.jwt;
     done();
   });
 
@@ -53,7 +55,7 @@ const buildApp = () => {
       }
 
       try {
-        await app.jwt.verify(accessToken);
+        app.jwt.verify(accessToken);
       } catch (err) {
         return reply.status(401).send({ error: 'Invalid or expired access token' });
       }
@@ -62,30 +64,7 @@ const buildApp = () => {
 
   app.register(app => authRoutes(app), { prefix: '/api/auth' });
   app.register(app => sensorsOutsideRoutes(app), { prefix: '/api/sensors_outside' });
-
-  app.get('/api/current_user', async (request, reply) => {
-    const { accessToken } = request.cookies;
-
-    if (!accessToken) {
-      return reply.status(401).send({ error: 'Missing access token' });
-    }
-
-    try {
-      const decoded = (await request.jwtVerify()) as { uid: string };
-
-      const userSnapshot = await app.db.collection('users').doc(decoded.uid).get();
-
-      if (!userSnapshot.exists) {
-        return reply.status(404).send({ error: 'User not found' });
-      }
-
-      const userData = userSnapshot.data();
-
-      reply.send({ user: userData });
-    } catch (err) {
-      return reply.status(401).send({ error: 'Invalid or expired access token' });
-    }
-  });
+  app.register(app => userRoutes(app), { prefix: '/api/user' });
 
   return app;
 };

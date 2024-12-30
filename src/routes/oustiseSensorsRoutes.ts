@@ -3,7 +3,7 @@ import { FastifyInstance } from 'fastify';
 import { DeleteIdsSchema, SensorsSchema } from '../models/sensorsModels';
 import {
   addOutsideSensorsDataController,
-  deleteOutsideSensorsData,
+  deleteOutsideSensorsDataController,
   getOutsideSensorsDataController,
 } from '../controllers/sensorsOutsideController';
 
@@ -25,7 +25,7 @@ const sensorsOutsideRoutes = async (app: FastifyInstance) => {
         body: DeleteIdsSchema,
       },
     },
-    deleteOutsideSensorsData
+    deleteOutsideSensorsDataController
   );
 };
 

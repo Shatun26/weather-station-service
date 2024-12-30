@@ -15,5 +15,6 @@ declare module 'fastify' {
 declare module 'fastify' {
   interface FastifyRequest {
     db: Firestore;
+    jwt: import('@fastify/jwt');
   }
 }
