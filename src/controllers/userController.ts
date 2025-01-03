@@ -13,7 +13,7 @@ export const currentUserController = async (req: FastifyRequest, reply: FastifyR
     const userSnapshot = await req.db.collection('users').doc(decoded.uid).get();
 
     if (!userSnapshot.exists) {
-      return reply.status(404).send({ error: 'User not found' });
+      return reply.status(400).send({ error: 'User not found' });
     }
 
     const { email } = userSnapshot.data() as { email: string };

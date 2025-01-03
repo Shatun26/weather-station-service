@@ -10,8 +10,8 @@ export const setCookie = (reply: FastifyReply, name: string, value: string, maxA
 };
 
 export const TOKEN_CONFIG = {
-  ACCESS_TOKEN_STRING_EXPIRES_IN: '15m',
+  ACCESS_TOKEN_STRING_EXPIRES_IN: '1m',
+  ACCESS_TOKEN_NUMBER_EXPIRES_IN: 1 * 60 * 1000,
   REFRESH_TOKEN_STRING_EXPIRES_IN: '1d',
-  ACCESS_TOKEN_NUMBER_EXPIRES_IN: 15 * 60 * 1000,
   REFRESH_TOKEN_NUMBER_EXPIRES_IN: 24 * 60 * 60 * 1000,
 };

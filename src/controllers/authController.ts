@@ -31,13 +31,19 @@ export const loginController = async (req: FastifyRequest, reply: FastifyReply) 
     setCookie(reply, 'accessToken', accessToken, TOKEN_CONFIG.ACCESS_TOKEN_NUMBER_EXPIRES_IN);
     setCookie(reply, 'refreshToken', refreshToken, TOKEN_CONFIG.REFRESH_TOKEN_NUMBER_EXPIRES_IN);
 
+    const jwtSignature = refreshToken.split('.')[2];
+    const hashedJwtSignature = await bcrypt.hash(jwtSignature, 10);
+    console.log('login', { hashedJwtSignature, refreshToken });
+
+    await userSnapshot.docs[0].ref.update({ hashedJwtSignature });
+
     reply.send({ message: 'Login successful' });
   } catch (error) {
     reply.status(500).send({ error: 'Internal server error' });
   }
 };
 
-export const refreshCOntroller = async (req: FastifyRequest, reply: FastifyReply) => {
+export const refreshController = async (req: FastifyRequest, reply: FastifyReply) => {
   try {
     const { refreshToken } = req.cookies;
     if (!refreshToken) {
@@ -48,7 +54,15 @@ export const refreshCOntroller = async (req: FastifyRequest, reply: FastifyReply
       uid: string;
       email: string;
     };
+    const userSnapshot = await req.db.collection('users').doc(decoded.uid).get();
 
+    const savedHashedJwtSignature = userSnapshot.data()?.hashedJwtSignature as string;
+    const jwtSignature = refreshToken.split('.')[2];
+    const isTokenValid = await bcrypt.compare(jwtSignature, savedHashedJwtSignature);
+
+    if (!isTokenValid) {
+      return reply.status(401).send({ error: 'Invalid refresh token' });
+    }
     const newAccessToken = req.jwt.sign(
       { uid: decoded.uid, email: decoded.email },
       { expiresIn: TOKEN_CONFIG.ACCESS_TOKEN_STRING_EXPIRES_IN, secret: process.env.ACCESS_SECRET }
@@ -61,6 +75,11 @@ export const refreshCOntroller = async (req: FastifyRequest, reply: FastifyReply
 
     setCookie(reply, 'accessToken', newAccessToken, TOKEN_CONFIG.ACCESS_TOKEN_NUMBER_EXPIRES_IN);
     setCookie(reply, 'refreshToken', newRefreshToken, TOKEN_CONFIG.REFRESH_TOKEN_NUMBER_EXPIRES_IN);
+
+    const newJwtSignature = newRefreshToken.split('.')[2];
+    const hashedRefreshToken = await bcrypt.hash(newJwtSignature, 10);
+
+    await userSnapshot.ref.update({ hashedJwtSignature: hashedRefreshToken });
 
     reply.send({ message: 'Tokens refreshed' });
   } catch (err) {

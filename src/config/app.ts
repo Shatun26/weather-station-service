@@ -20,7 +20,7 @@ const buildApp = () => {
   const db = initializeFirebase();
 
   app.register(fastifyCors, {
-    origin: '*',
+    origin: ['http://localhost:3000', 'https://example.com'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,

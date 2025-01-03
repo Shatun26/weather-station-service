@@ -8,9 +8,9 @@ import {
 } from '../controllers/sensorsOutsideController';
 
 const sensorsOutsideRoutes = async (app: FastifyInstance) => {
-  app.get('/', getOutsideSensorsDataController);
+  app.get('', getOutsideSensorsDataController);
   app.post(
-    '/',
+    '',
     {
       schema: {
         body: SensorsSchema,
@@ -19,7 +19,7 @@ const sensorsOutsideRoutes = async (app: FastifyInstance) => {
     addOutsideSensorsDataController
   );
   app.delete(
-    '/',
+    '',
     {
       schema: {
         body: DeleteIdsSchema,

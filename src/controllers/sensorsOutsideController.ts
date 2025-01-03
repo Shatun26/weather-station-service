@@ -51,7 +51,7 @@ export const deleteOutsideSensorsDataController = async (
     const { existingDocs, nonExistentIds } = await checkDocumentsExistence(db, ids);
 
     if (nonExistentIds.length > 0) {
-      return res.status(404).send({
+      return res.status(400).send({
         message: 'Some IDs do not exist',
         nonExistentIds,
       });
