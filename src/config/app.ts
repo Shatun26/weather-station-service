@@ -24,7 +24,7 @@ const buildApp = () => {
       const allowedOrigins = [
         'http://localhost:3000',
         'https://weather-station-service.onrender.com',
-        'https://frontend-app.onrender.com',
+        'https://weather-station-client.onrender.com',
       ];
       if (!origin || allowedOrigins.includes(origin)) {
         callback(null, true);
