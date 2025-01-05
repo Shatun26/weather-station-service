@@ -88,17 +88,9 @@ export const refreshController = async (req: FastifyRequest, reply: FastifyReply
 };
 
 export const logOutController = async (_: FastifyRequest, reply: FastifyReply) => {
-  reply.clearCookie('accessToken', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-  });
+  reply.clearCookie('accessToken');
 
-  reply.clearCookie('refreshToken', {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-  });
+  reply.clearCookie('refreshToken');
 
   reply.send({ message: 'Logged out successfully' });
 };

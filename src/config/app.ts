@@ -20,7 +20,18 @@ const buildApp = () => {
   const db = initializeFirebase();
 
   app.register(fastifyCors, {
-    origin: ['http://localhost:3000', 'https://weather-station-service.onrender.com'],
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'http://localhost:3000',
+        'https://weather-station-service.onrender.com',
+        'https://frontend-app.onrender.com',
+      ];
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'), origin);
+      }
+    },
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true,
@@ -28,7 +39,12 @@ const buildApp = () => {
 
   app.register(fastifyCookie, {
     secret: process.env.COOKIE_SECRET,
-    parseOptions: { path: '/' },
+    parseOptions: {
+      httpOnly: true,
+      path: '/',
+      sameSite: 'none',
+      secure: true,
+    },
   });
 
   if (process.env.ACCESS_SECRET)

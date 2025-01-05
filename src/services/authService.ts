@@ -1,12 +1,7 @@
 import { FastifyReply } from 'fastify';
 
 export const setCookie = (reply: FastifyReply, name: string, value: string, maxAge: number) => {
-  reply.cookie(name, value, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge,
-  });
+  reply.cookie(name, value, { maxAge });
 };
 
 export const TOKEN_CONFIG = {
